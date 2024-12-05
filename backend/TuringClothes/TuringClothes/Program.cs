@@ -62,6 +62,7 @@ namespace TuringClothes
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddScoped<EmailService>();
 
             builder.Services.AddScoped<MyDatabase>();
             builder.Services.AddScoped<AuthRepository>();

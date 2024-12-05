@@ -8,6 +8,7 @@ using TuringClothes.Database;
 using TuringClothes.Model;
 using TuringClothes.Repository;
 using TuringClothes.Dtos;
+using TuringClothes.Services;
 
 
 namespace TuringClothes.Controllers
@@ -20,12 +21,14 @@ namespace TuringClothes.Controllers
         private readonly TemporaryOrderRepository _temporaryOrderRepository;
         private readonly UserRepository _userRepository;
         private readonly OrderRepository _orderRepository;
-        public CheckoutController(IOptions<Settings> options, TemporaryOrderRepository temporaryOrderRepository, OrderRepository orderRepository, UserRepository userRepository)
+        private readonly EmailService _emailService;
+        public CheckoutController(IOptions<Settings> options, TemporaryOrderRepository temporaryOrderRepository, OrderRepository orderRepository, UserRepository userRepository, EmailService emailService)
         {
             _settings = options.Value;
             _temporaryOrderRepository = temporaryOrderRepository;
             _orderRepository = orderRepository;
             _userRepository = userRepository;
+            _emailService = new EmailService();
 
         }
 
@@ -93,11 +96,11 @@ namespace TuringClothes.Controllers
             SessionService sessionService = new SessionService();
             Session session = await sessionService.GetAsync(sessionId);
             var orderNew = new Order();
-            if(session.PaymentStatus == "paid")
+            if (session.PaymentStatus == "paid")
             {
                 orderNew = await _orderRepository.CreateOrder(temporaryOrderId, session.PaymentMethodTypes.FirstOrDefault(), session.PaymentStatus, session.AmountTotal.Value, session.CustomerEmail);
-                
-                return Ok(new { order = orderNew.Id});
+
+                return Ok(new { order = orderNew.Id });
             }
 
             return BadRequest("No está pagado");
@@ -123,5 +126,32 @@ namespace TuringClothes.Controllers
             }
             return productList.ToArray();
         }
+        [HttpPost]
+        [Route("SendEmail")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailDto emailDto)
+        {
+            try
+            {
+                // Validación de entrada
+                if (emailDto == null || string.IsNullOrEmpty(emailDto.To) || string.IsNullOrEmpty(emailDto.HtmlContent))
+                {
+                    return BadRequest("El correo o el contenido HTML son inválidos.");
+                }
+
+                // Enviar el correo
+                await _emailService.SendEmailAsync(emailDto.To, "Asunto", emailDto.HtmlContent);
+
+                return Ok("Correo enviado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                // Registra el error
+                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                return StatusCode(500, $"Error al enviar el correo: {ex.Message}");
+            }
+        }
+
+
+
     }
 }
