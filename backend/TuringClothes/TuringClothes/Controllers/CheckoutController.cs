@@ -8,6 +8,7 @@ using TuringClothes.Database;
 using TuringClothes.Model;
 using TuringClothes.Repository;
 using TuringClothes.Dtos;
+using TuringClothes.Services;
 
 
 namespace TuringClothes.Controllers
@@ -18,10 +19,12 @@ namespace TuringClothes.Controllers
     {
         private readonly Settings _settings;
         private readonly UnitOfWork _unitOfWork;
-        public CheckoutController(IOptions<Settings> options, UnitOfWork unitOfWork)
+        private readonly EmailService _emailService;
+        public CheckoutController(IOptions<Settings> options, UnitOfWork unitOfWork, EmailService emailService)
         {
             _settings = options.Value;
             _unitOfWork = unitOfWork;
+            _emailService = emailService;
 
         }
 
@@ -121,5 +124,35 @@ namespace TuringClothes.Controllers
             }
             return productList.ToArray();
         }
+        [HttpPost]
+        [Route("SendEmail")]
+        public async Task<IActionResult> SendEmail([FromBody] EmailDto emailDto)
+        {
+            try
+            {
+                // Validación de entrada
+                if (emailDto == null || string.IsNullOrEmpty(emailDto.To) || string.IsNullOrEmpty(emailDto.HtmlContent))
+                {
+                    return BadRequest("El correo o el contenido HTML son inválidos.");
+                }
+
+                // Enviar el correo
+                await _emailService.SendEmailAsync(emailDto.To, "Asunto", emailDto.HtmlContent);
+
+                return Ok("Correo enviado exitosamente");
+            }
+            catch (Exception ex)
+            {
+                // Registra el error
+                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
+                return StatusCode(500, $"Error al enviar el correo: {ex.Message}");
+            }
+        }
+
+
+
     }
+
+
 }
+

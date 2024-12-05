@@ -152,6 +152,16 @@ export class ProductDetailsComponent implements OnInit {
       if (this.authService.isLoggedIn) {
         await this.router.navigate(['/cart']);
         await this.cartService.getCart();
+        Swal.fire({
+          icon: 'success',
+          text: 'Producto añadido',
+          showConfirmButton: false,
+          animation: true,
+          toast: true,
+          position: 'top-right',
+          timer: 1100
+        });
+
       } else {
         await this.router.navigate(['/local-cart']);
       }
@@ -176,6 +186,7 @@ export class ProductDetailsComponent implements OnInit {
 
       if (existingDetail) {
         existingDetail.amount += quantity;
+        
       } else {
         const newDetails = {
           id: null,
@@ -187,12 +198,24 @@ export class ProductDetailsComponent implements OnInit {
         localCart.details.push(newDetails);
       }
       localStorage.setItem('localCart', JSON.stringify(localCart));
+      
       return Result.success(200, 'Producto agregado al carrito');
+      
     }
     const result = await this.cartService.addProductToCart(productId, quantity);
     console.log(result);
     if (result.success) {
       await this.cartService.getCart();
+      Swal.fire({
+        icon: 'success',
+        text: 'Producto añadido',
+        showConfirmButton: false,
+        animation: true,
+        toast: true,
+        position: 'top-right',
+        timer: 1100
+      });
+
       return result;
     }
     return result;
