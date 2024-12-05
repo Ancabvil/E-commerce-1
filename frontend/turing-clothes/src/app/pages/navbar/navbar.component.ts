@@ -19,7 +19,7 @@ export class NavbarComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private cartService: CartServiceService
-  ) {}
+  ) { }
   async ngOnInit(): Promise<void> {
     if (this.isLoguedIn()) {
       await this.cartService.getCart();
@@ -29,12 +29,12 @@ export class NavbarComponent implements OnInit {
     });
   }
 
-  isAdmin(): boolean {
-    return this.authService.decodedToken.role === 'admin';
-  }
-
   isLoguedIn(): boolean {
     return this.authService.isLoggedIn;
+  }
+
+  isAdmin(): boolean {
+    return this.authService.decodedToken.role === 'admin';
   }
 
   getLogedUsername() {

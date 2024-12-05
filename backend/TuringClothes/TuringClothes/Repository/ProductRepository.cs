@@ -4,10 +4,10 @@ using TuringClothes.Database;
 
 namespace TuringClothes.Repository
 {
-    public class ProductRepository 
+    public class ProductRepository : Repository<Product, long>
     {
         private readonly MyDatabase _myDataBase;
-        public ProductRepository(MyDatabase myDatabase) 
+        public ProductRepository(MyDatabase myDatabase) : base(myDatabase) 
         {
             _myDataBase = myDatabase;
         }

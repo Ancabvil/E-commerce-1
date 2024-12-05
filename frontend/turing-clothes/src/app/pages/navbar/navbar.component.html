@@ -1,47 +1,23 @@
 <section>
   <nav class="navbar navbar-expand-lg bg-dark" style="width: 100%">
     <div class="container flex-wrap flex-lg-nowrap" style="width: 100%">
-      <a
-        class="navbar-brand text-white"
-        [routerLink]="'home'"
-        routerLinkActive="router-link-active"
-        >Turing Clothes</a
-      >
+      <a class="navbar-brand text-white" [routerLink]="'home'" routerLinkActive="router-link-active">Turing Clothes</a>
 
-      <button
-        class="navbar-toggler"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#navbarSupportedContent"
-        aria-controls="navbarSupportedContent"
-        aria-expanded="false"
-        aria-label="Toggle navigation"
-      >
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
 
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-4">
           <li class="nav-item">
-            <a
-              class="nav-link active text-white"
-              aria-current="page"
-              [routerLink]="'home'"
-              >Inicio</a
-            >
+            <a class="nav-link active text-white" aria-current="page" [routerLink]="'home'">Inicio</a>
           </li>
           <li class="nav-item">
-            <a
-              class="nav-link active text-white"
-              aria-current="page"
-              [routerLink]="'catalog'"
-              >Catálogo</a
-            >
+            <a class="nav-link active text-white" aria-current="page" [routerLink]="'catalog'">Catálogo</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link text-white" [routerLink]="'aboutus'"
-              >Sobre nosotros</a
-            >
+            <a class="nav-link text-white" [routerLink]="'aboutus'">Sobre nosotros</a>
           </li>
 
           @if (isLoguedIn()) {
@@ -53,28 +29,22 @@
 
         <div class="d-flex align-items-center">
           @if (isLoguedIn()) {
-          <a
-            class="btn btn-outline-dark bg-white me-2"
+          <a class="btn btn-outline-dark bg-white me-2"
             onmouseover="this.classList.add('text-primary', 'border-primary')"
-            onmouseout="this.classList.remove('text-primary', 'border-primary')"
-            [routerLink]="'cart'"
-          >
+            onmouseout="this.classList.remove('text-primary', 'border-primary')" [routerLink]="'cart'">
             <i class="bi bi-bag"></i>
             <span class="badge bg-dark text-white ms-1 rounded-pill">{{
               cartQuantity
-            }}</span>
+              }}</span>
           </a>
           } @else {
-          <a
-            class="btn me-2 btn-outline-dark bg-white"
+          <a class="btn me-2 btn-outline-dark bg-white"
             onmouseover="this.classList.add('text-primary', 'border-primary')"
-            onmouseout="this.classList.remove('text-primary', 'border-primary')"
-            [routerLink]="'local-cart'"
-          >
+            onmouseout="this.classList.remove('text-primary', 'border-primary')" [routerLink]="'local-cart'">
             <i class="bi bi-bag text-black"></i>
             <span class="badge bg-dark text-white ms-1 rounded-pill">{{
               cartQuantity
-            }}</span>
+              }}</span>
           </a>
           }
 
@@ -82,29 +52,21 @@
           <div class="pt-2">
             <p class="text-white">Bienvenido, {{ getLogedUsername() }}.</p>
           </div>
-          <button
-            class="btn btn-outline-dark bg-white text-black me-2 ms-2"
+          <button class="btn btn-outline-dark bg-white text-black me-2 ms-2"
             onmouseover="this.classList.add('text-primary', 'border-primary')"
-            onmouseout="this.classList.remove('text-primary', 'border-primary')"
-            (click)="logout()"
-          >
+            onmouseout="this.classList.remove('text-primary', 'border-primary')" (click)="logout()">
             Cerrar sesión
           </button>
           @if (isAdmin()) {
-            <a class="bi bi-person-gear text-white" [routerLink]="'admin'"></a>
+          <a class="bi bi-person-gear text-white" [routerLink]="'admin'"></a>
           } @else {
-            <a class="bi bi-person text-white" [routerLink]="'user'"></a>
+          <a class="nav-link bi bi-person text-white" [routerLink]="'user'"></a>
           }
           } @else {
-          <a
-            class="btn btn-outline-dark text-black bg-white"
+          <a class="btn btn-outline-dark text-black bg-white"
             onmouseover="this.classList.add('text-primary', 'border-primary')"
-            onmouseout="this.classList.remove('text-primary', 'border-primary')"
-            [routerLink]="'login'"
-          >
-            <span class="badge text-black ms-1 rounded-pill"
-              >Iniciar sesión</span
-            >
+            onmouseout="this.classList.remove('text-primary', 'border-primary')" [routerLink]="'login'">
+            <span class="badge text-black ms-1 rounded-pill">Iniciar sesión</span>
           </a>
           }
         </div>

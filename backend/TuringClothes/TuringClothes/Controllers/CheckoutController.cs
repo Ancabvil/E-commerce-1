@@ -8,7 +8,6 @@ using TuringClothes.Database;
 using TuringClothes.Model;
 using TuringClothes.Repository;
 using TuringClothes.Dtos;
-using TuringClothes.Services;
 
 
 namespace TuringClothes.Controllers
@@ -18,17 +17,11 @@ namespace TuringClothes.Controllers
     public class CheckoutController : ControllerBase
     {
         private readonly Settings _settings;
-        private readonly TemporaryOrderRepository _temporaryOrderRepository;
-        private readonly UserRepository _userRepository;
-        private readonly OrderRepository _orderRepository;
-        private readonly EmailService _emailService;
-        public CheckoutController(IOptions<Settings> options, TemporaryOrderRepository temporaryOrderRepository, OrderRepository orderRepository, UserRepository userRepository, EmailService emailService)
+        private readonly UnitOfWork _unitOfWork;
+        public CheckoutController(IOptions<Settings> options, UnitOfWork unitOfWork)
         {
             _settings = options.Value;
-            _temporaryOrderRepository = temporaryOrderRepository;
-            _orderRepository = orderRepository;
-            _userRepository = userRepository;
-            _emailService = new EmailService();
+            _unitOfWork = unitOfWork;
 
         }
 
@@ -48,8 +41,8 @@ namespace TuringClothes.Controllers
         [HttpGet("embedded")]
         public async Task<ActionResult> EmbededCheckout(long temporaryOrderId)
         {
-            TemporaryOrder temporaryOrder = await _temporaryOrderRepository.GetTemporaryOrder(temporaryOrderId);
-            User user = await _userRepository.GetUserById(temporaryOrder.UserId);
+            TemporaryOrder temporaryOrder = await _unitOfWork.TemporaryOrderRepository.GetTemporaryOrder(temporaryOrderId);
+            User user = await _unitOfWork.UserRepository.GetUserById(temporaryOrder.UserId);
             ProductOrderDto[] products = await GetAllProducts(temporaryOrderId);
             List<SessionLineItemOptions> lineItems = new List<SessionLineItemOptions>();
             foreach (var product in products)
@@ -96,11 +89,13 @@ namespace TuringClothes.Controllers
             SessionService sessionService = new SessionService();
             Session session = await sessionService.GetAsync(sessionId);
             var orderNew = new Order();
-            if (session.PaymentStatus == "paid")
-            {
-                orderNew = await _orderRepository.CreateOrder(temporaryOrderId, session.PaymentMethodTypes.FirstOrDefault(), session.PaymentStatus, session.AmountTotal.Value, session.CustomerEmail);
 
-                return Ok(new { order = orderNew.Id });
+            Console.WriteLine(temporaryOrderId);
+            if(session.PaymentStatus == "paid")
+            {
+                orderNew = await _unitOfWork.OrderRepository.CreateOrder(temporaryOrderId, session.PaymentMethodTypes.FirstOrDefault(), session.PaymentStatus, session.AmountTotal.Value, session.CustomerEmail);
+                
+                return Ok(new { order = orderNew.Id});
             }
 
             return BadRequest("No está pagado");
@@ -108,7 +103,7 @@ namespace TuringClothes.Controllers
 
         private async Task<ProductOrderDto[]> GetProducts(long temporaryOrderId)
         {
-            TemporaryOrder temporaryOrder = await _temporaryOrderRepository.GetTemporaryOrder(temporaryOrderId);
+            TemporaryOrder temporaryOrder = await _unitOfWork.TemporaryOrderRepository.GetTemporaryOrder(temporaryOrderId);
             List<ProductOrderDto> productList = new List<ProductOrderDto>();
             foreach (var orderDetail in temporaryOrder.Details)
             {
@@ -126,32 +121,5 @@ namespace TuringClothes.Controllers
             }
             return productList.ToArray();
         }
-        [HttpPost]
-        [Route("SendEmail")]
-        public async Task<IActionResult> SendEmail([FromBody] EmailDto emailDto)
-        {
-            try
-            {
-                // Validación de entrada
-                if (emailDto == null || string.IsNullOrEmpty(emailDto.To) || string.IsNullOrEmpty(emailDto.HtmlContent))
-                {
-                    return BadRequest("El correo o el contenido HTML son inválidos.");
-                }
-
-                // Enviar el correo
-                await _emailService.SendEmailAsync(emailDto.To, "Asunto", emailDto.HtmlContent);
-
-                return Ok("Correo enviado exitosamente");
-            }
-            catch (Exception ex)
-            {
-                // Registra el error
-                Console.WriteLine($"Error al enviar el correo: {ex.Message}");
-                return StatusCode(500, $"Error al enviar el correo: {ex.Message}");
-            }
-        }
-
-
-
     }
 }

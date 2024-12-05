@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TuringClothes.Database;
+using TuringClothes.Model;
 using TuringClothes.Repository;
 
 namespace TuringClothes.Controllers
@@ -12,12 +13,10 @@ namespace TuringClothes.Controllers
 
     public class CartController : ControllerBase
     {
-        private readonly CartRepository _cartRepository;
-
-        public CartController(CartRepository cartRepository)
+        private readonly UnitOfWork _unitOfWork;
+        public CartController(UnitOfWork unitOfWork)
         {
-            _cartRepository = cartRepository;
-
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -31,7 +30,7 @@ namespace TuringClothes.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
-            var cart = await _cartRepository.GetCart(userIdLong);
+            var cart = await _unitOfWork.CartRepository.GetCart(userIdLong);
             if (cart == null)
             {
                 return NotFound("Cart not found");
@@ -50,7 +49,7 @@ namespace TuringClothes.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
-            await _cartRepository.AddItemToCart(id, userIdLong, quantity);
+            await _unitOfWork.CartRepository.AddItemToCart(id, userIdLong, quantity);
 
             return Ok("Product added");
         }
@@ -66,7 +65,7 @@ namespace TuringClothes.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
-            await _cartRepository.RemoveItemFromCart(id, userIdLong);
+            await _unitOfWork.CartRepository.RemoveItemFromCart(id, userIdLong);
 
             return Ok(new { message = "Product Removed" });
         }
@@ -82,13 +81,13 @@ namespace TuringClothes.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
-            var result = await _cartRepository.UpdateItemInCart(id, amount, userIdLong);
+            var result = await _unitOfWork.CartRepository.UpdateItemInCart(id, amount, userIdLong);
 
             if (!result)
             {
                 return BadRequest("Failed to update the cart");
             }
-                
+
             return Ok(new { message = "Cart updated" });
         }
     }

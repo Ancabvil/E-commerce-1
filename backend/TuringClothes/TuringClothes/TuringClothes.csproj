@@ -8,9 +8,13 @@
 
   <ItemGroup>
     <Compile Remove="Mapper\**" />
+    <Compile Remove="Services\NewFolder\**" />
     <Content Remove="Mapper\**" />
+    <Content Remove="Services\NewFolder\**" />
     <EmbeddedResource Remove="Mapper\**" />
+    <EmbeddedResource Remove="Services\NewFolder\**" />
     <None Remove="Mapper\**" />
+    <None Remove="Services\NewFolder\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -42,5 +46,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
+	<ItemGroup>
+		<Content Update="wwwroot\**\*">
+			<CopyToOutputDirectory>Always</CopyToOutputDirectory>
+		</Content>
+	</ItemGroup>
 </Project>

@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using TuringClothes.Database;
 using TuringClothes.Dtos;
+using TuringClothes.Model;
 using TuringClothes.Repository;
 
 namespace TuringClothes.Controllers
@@ -11,17 +12,12 @@ namespace TuringClothes.Controllers
     [ApiController]
     public class TemporaryOrderController : ControllerBase
     {
-        private readonly MyDatabase _myDatabase;
-        private readonly TemporaryOrderRepository _orderRepository;
-        private readonly CartRepository _cartRepository;
-        private readonly ProductRepository _productRepository;
 
-        public TemporaryOrderController(MyDatabase myDatabase, CartRepository cartRepository, ProductRepository productRepository, TemporaryOrderRepository orderRepository)
+        private readonly UnitOfWork _unitOfWork;
+
+        public TemporaryOrderController(UnitOfWork unitOfWork)
         {
-            _myDatabase = myDatabase;
-            _cartRepository = cartRepository;
-            _productRepository = productRepository;
-            _orderRepository = orderRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [Authorize]
@@ -40,7 +36,7 @@ namespace TuringClothes.Controllers
                 return Unauthorized("Invalid user ID.");
             }
 
-            var temporaryOrder = await _orderRepository.CreateTemporaryOrder(orderDetailsDto, userIdLong);
+            var temporaryOrder = await _unitOfWork.TemporaryOrderRepository.CreateTemporaryOrder(orderDetailsDto, userIdLong);
 
             return Ok(temporaryOrder);
         }
@@ -48,7 +44,7 @@ namespace TuringClothes.Controllers
         [HttpGet("TemporaryOrder")]
         public async Task<ActionResult<TemporaryOrder>> GetTemporaryOrder(long id)
         {
-            var temporaryOrder = _orderRepository.GetTemporaryOrder(id);
+            var temporaryOrder = _unitOfWork.TemporaryOrderRepository.GetTemporaryOrder(id);
             return Ok(temporaryOrder);
         }
 
@@ -56,13 +52,13 @@ namespace TuringClothes.Controllers
         [HttpPost("RefreshTemporaryOrders")]
         public async Task<ActionResult> RefreshTemporaryOrders(long temporaryOrderId)
         {
-            var temporaryOrder = await _orderRepository.GetTemporaryOrder(temporaryOrderId);
+            var temporaryOrder = await _unitOfWork.TemporaryOrderRepository.GetTemporaryOrder(temporaryOrderId);
             if (temporaryOrder == null)
             {
                 return NotFound("Temporary order no existe.");
             }
             temporaryOrder.ExpirationTime = DateTime.UtcNow.AddMinutes(1);
-            await _myDatabase.SaveChangesAsync();
+            await _unitOfWork.SaveChangesAsync();
             return Ok("Temporary order expiration extendida.");
         }
     }

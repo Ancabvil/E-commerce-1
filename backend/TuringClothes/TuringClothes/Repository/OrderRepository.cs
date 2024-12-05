@@ -1,6 +1,5 @@
 
 using Microsoft.EntityFrameworkCore;
-using Stripe.Checkout;
 using TuringClothes.Database;
 
 namespace TuringClothes.Repository
@@ -8,22 +7,26 @@ namespace TuringClothes.Repository
     public class OrderRepository
     {
         private readonly MyDatabase _myDatabase;
-        private readonly TemporaryOrderRepository _temporaryOrderRepository;
 
-        public OrderRepository(MyDatabase myDatabase, TemporaryOrderRepository temporaryOrderRepository)
+        public OrderRepository(MyDatabase myDatabase)
         {
             _myDatabase = myDatabase;
-            _temporaryOrderRepository = temporaryOrderRepository;
         }
 
         public async Task<Order> CreateOrder(long id, string paymentMethod, string? status, long total, string email)
 
         {
-            var temporaryOrder = await _temporaryOrderRepository.GetTemporaryOrder(id);
+            var temporaryOrder = await _myDatabase.TemporaryOrders.Include(d => d.Details).ThenInclude(p => p.Product).FirstOrDefaultAsync(t => t.Id == id);
+            Console.WriteLine(temporaryOrder.Id);
 
             if (temporaryOrder == null)
             {
                 throw new Exception($"La orden temporal {id} no existe.");
+            }
+
+            if (temporaryOrder.Details == null || !temporaryOrder.Details.Any())
+            {
+                throw new Exception($"La orden temporal {id} no tiene detalles.");
             }
 
             try

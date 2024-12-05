@@ -1,0 +1,72 @@
+<div class="container vh-100 d-flex justify-content-center align-items-center">
+  <div class="card shadow-lg p-4" style="width: 100%; max-width: 500px">
+    <h2 class="mb-4 text-center">Añadir nuevo producto</h2>
+    <form>
+      <div class="mb-3">
+        <label for="productName" class="form-label">Nombre del producto</label>
+        <input
+          type="text"
+          class="form-control"
+          id="productName"
+          placeholder="Introduce el nombre del producto"
+          [(ngModel)]="product.name"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="productName" class="form-label"
+          >Descripción del producto</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          id="productDescription"
+          placeholder="Introduce la descripción del producto"
+          [(ngModel)]="product.description"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="productPrice" class="form-label">Precio del producto</label>
+        <input
+          type="number"
+          class="form-control"
+          id="productPrice"
+          placeholder="Introduce el precio del producto"
+          [(ngModel)]="product.price"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="productStock" class="form-label">Stock</label>
+        <input
+          type="number"
+          class="form-control"
+          id="productStock"
+          placeholder="Introduce el stock del producto"
+          [(ngModel)]="product.stock"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <div class="mb-3">
+        <label for="productImage" class="form-label">Imagen</label>
+        <input
+          type="file"
+          class="form-control"
+          id="productImage"
+          [(ngModel)]="product.image"
+          [ngModelOptions]="{ standalone: true }"
+        />
+      </div>
+      <div class="d-grid">
+        <button
+          type="submit"
+          class="btn btn-dark"
+          (click)="addProduct(product)"
+        >
+          Añadir producto
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

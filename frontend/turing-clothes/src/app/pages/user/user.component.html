@@ -1,0 +1,54 @@
+<div class="container my-5">
+    <header class="text-center mb-5">
+        <h1 class="fw-bold text-dark">Perfil de Usuario</h1>
+    </header>
+
+
+    <section class="user-info mb-5">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <h2 class="h4 m-0">Información del Usuario</h2>
+            </div>
+            <div class="card-body bg-white">
+                <p class="mb-2"><strong>Nombre:</strong> username</p>
+                <p class="mb-2"><strong>Correo electrónico:</strong> usermail</p>
+                <p class="mb-2"><strong>Dirección:</strong> useraddress</p>
+                <p><strong>Rol:</strong> userrole</p>
+                <a href="#" class="btn btn-dark mt-3">Editar Información</a>
+            </div>
+        </div>
+    </section>
+
+
+    <section class="user-orders">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-dark text-white">
+                <h2 class="h4 m-0">Pedidos</h2>
+            </div>
+            <div class="card-body bg-white">
+                <div class="mb-4 p-3 border rounded">
+                    <p class="mb-1"><strong>Fecha de pago:</strong> orderDate</p>
+                    <p class="mb-1"><strong>Total:</strong> OrderTotal</p>
+                    <p><strong>Método de pago:</strong> Pymentmethod</p>
+                    <h3 class="h5 mt-3">Productos:</h3>
+                    <div class="forproduct" class="d-flex align-items-center border-bottom pb-2 mb-2">
+                        <img [src]="" [alt]="" class="me-3 rounded"
+                            style="width: 50px; height: 50px; object-fit: cover;">
+                        <div>
+                            <p class="m-0"><strong>productName</strong></p>
+                            <p class="m-0">Cantidad: ProductQuantity</p>
+                            <p class="m-0">Precio unitario: Productprice €</p>
+                        </div>
+                    </div>
+                </div>
+                @if (true) {
+                <div class="text-muted text-center">
+                    <small>No hay más pedidos.</small>
+                </div>
+                }
+
+            </div>
+        </div>
+    </section>
+
+</div>

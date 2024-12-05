@@ -1,0 +1,33 @@
+<div class="container-fluid my-4">
+    <div class="row">
+        <div class="col-12 col-md-3 col-lg-2">
+            <app-sidebar />
+        </div>
+        <div class="col-12 col-md-9 col-lg-10">
+            <h2 class="mb-4">Gestión de Usuarios</h2>
+            <p>Aquí puedes ver y gestionar los usuarios registrados.</p>
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Correo</th>
+                                <th>Rol</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @for (user of users; track user.id) {
+                            <tr>
+                                <td>{{ user.name + " " + user.surname}}</td>
+                                <td>{{ user.email}}</td>
+                                <td>{{ user.role }}</td>
+                            </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

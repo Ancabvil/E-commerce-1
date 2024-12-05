@@ -61,7 +61,9 @@ export class CheckoutComponent implements OnInit, OnDestroy {
   ) {}
   ngOnDestroy(): void {
     this.pollingSubscription.unsubscribe();
-    this.stripeEmbedCheckout.destroy();
+    if (this.payment === "card") {
+      this.stripeEmbedCheckout.destroy();
+    }
   }
 
   async ngOnInit() {
@@ -209,7 +211,6 @@ export class CheckoutComponent implements OnInit, OnDestroy {
       wallet: account,
       paymentMethod: this.payment,
     };
-    console.log(checkTransactionRequest);
 
     const checkTransactionResult = await this.blockchainService.checkTransaction(
       checkTransactionRequest
@@ -218,6 +219,7 @@ export class CheckoutComponent implements OnInit, OnDestroy {
     // Notificamos al usuario si la transacción ha sido exitosa o si ha fallado.
     if (checkTransactionResult.success && checkTransactionResult.data) {
       alert('Transacción realizada con éxito');
+      this.router.navigateByUrl(`/confirm-checkout/${this.temporaryOrderId}`);
     } else {
       alert('Transacción fallida');
     }

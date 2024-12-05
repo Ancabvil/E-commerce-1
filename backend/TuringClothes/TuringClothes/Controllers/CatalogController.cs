@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Dynamic.Core;
 using TuringClothes.Database;
 using TuringClothes.Dtos;
+using TuringClothes.Model;
 using TuringClothes.Pagination;
 using TuringClothes.Repository;
 using TuringClothes.Services;
@@ -18,17 +19,13 @@ namespace TuringClothes.Controllers
     [ApiController]
     public class CatalogController : ControllerBase
     {
-        private readonly MyDatabase _myDatabase;
+        private readonly UnitOfWork _unitOfWork;
         private readonly CatalogService _catalogService;
-        private readonly ProductRepository _productRepository;
         
-       
-        public CatalogController(MyDatabase myDatabase, CatalogService catalogService, ProductRepository productRepository) 
-        { 
-            _myDatabase = myDatabase;
-            _catalogService = catalogService; 
-            _productRepository = productRepository;
-
+        public CatalogController(UnitOfWork unitOfWork, CatalogService catalogService)
+        {
+            _unitOfWork = unitOfWork;
+            _catalogService = catalogService;
         }
 
 
@@ -38,7 +35,7 @@ namespace TuringClothes.Controllers
         {
             try
             {
-                var result = await _productRepository.GetProductById(id);
+                var result = await _unitOfWork.ProductRepository.GetProductById(id);
 
                 if (result == null) return NotFound();
 

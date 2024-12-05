@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TuringClothes.Controllers;
 using TuringClothes.Database;
+using TuringClothes.Model;
 
 
 namespace TuringClothes.Repository
@@ -10,12 +11,9 @@ namespace TuringClothes.Repository
     public class CartRepository
     {
         private readonly MyDatabase _myDatabase;
-        private readonly ProductRepository _productRepository;
-        public CartRepository(MyDatabase database, ProductRepository productRepository)
+        public CartRepository(MyDatabase myDatabase)
         {
-            _myDatabase = database;
-            _productRepository = productRepository;
-
+            _myDatabase = myDatabase;
         }
 
         public async Task<Cart> GetCart(long id)
@@ -39,7 +37,7 @@ namespace TuringClothes.Repository
                 _myDatabase.Carts.Add(cart);
             }
             var existingDetails = cart.Details.FirstOrDefault(d => d.ProductId == productId);
-            Product product = await _productRepository.GetProductById(productId);
+            Product product = await _myDatabase.Products.FirstOrDefaultAsync(p => p.Id == productId);
 
             if (existingDetails != null)
             {
@@ -70,13 +68,6 @@ namespace TuringClothes.Repository
             {
                 cart.Details.Remove(cartDetails);
 
-
-                //cartDetails.Amount -= 1; // No puede ser esto así porque es duplicación de código. Esto ya se hace en el update.
-
-                //if (cartDetails.Amount == 0)
-                //{
-                //    cart.Details.Remove(cartDetails);
-                //}
             }
 
             await _myDatabase.SaveChangesAsync();
@@ -96,7 +87,7 @@ namespace TuringClothes.Repository
                 };
                 _myDatabase.Carts.Add(cart);
             }
-            Product product = await _productRepository.GetProductById(productId);
+            Product product = await _myDatabase.Products.FirstOrDefaultAsync(p => p.Id == productId);
             var cartDetails = cart.Details.FirstOrDefault(d => d.ProductId == productId);
 
             if (cartDetails == null)

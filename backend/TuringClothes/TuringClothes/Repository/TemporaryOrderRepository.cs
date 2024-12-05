@@ -2,16 +2,16 @@
 using Microsoft.EntityFrameworkCore;
 using TuringClothes.Database;
 using TuringClothes.Dtos;
+using TuringClothes.Model;
 
 namespace TuringClothes.Repository
 {
     public class TemporaryOrderRepository : Repository<TemporaryOrder, long>
     {
-        private readonly ProductRepository _productRepository;
-        public TemporaryOrderRepository(MyDatabase myDatabase, ProductRepository productRepository) : base(myDatabase)
+
+        public TemporaryOrderRepository(MyDatabase myDatabase) : base(myDatabase)
         {
             _myDatabase = myDatabase;
-            _productRepository = productRepository;
         }
 
         public async Task<TemporaryOrder> CreateTemporaryOrder(ICollection<OrderDetailDto> orderDetailDto, long userId)
@@ -33,7 +33,7 @@ namespace TuringClothes.Repository
 
                 foreach (var orderDetail in orderDetailDto)
                 {
-                    var product = await _productRepository.GetProductByIdOrder(orderDetail.ProductId);
+                    var product = await _myDatabase.Products.FirstOrDefaultAsync(p => p.Id == orderDetail.ProductId);
                     if (product == null)
                     {
                         throw new Exception($"El producto con la ID {orderDetail.ProductId} no existe.");
@@ -49,7 +49,7 @@ namespace TuringClothes.Repository
                             Product = product
                         };
                         temporaryOrder.TotalPriceEur += (newOrderDetail.Product.Price * newOrderDetail.Amount);
-                        
+
                         temporaryOrder.Details.Add(newOrderDetail);
 
                         product.Stock -= orderDetail.Amount;
@@ -67,7 +67,7 @@ namespace TuringClothes.Repository
                 {
                     _myDatabase.Remove(temporaryOrder);
                     await _myDatabase.SaveChangesAsync();
-                  
+
                     var productNames = string.Join(", ", noStockProducts.Select(x => x.ProductId));
                     throw new Exception($"Los siguientes productos no tienen stock: {productNames}");
 
@@ -77,14 +77,17 @@ namespace TuringClothes.Repository
                 await transaction.CommitAsync();
                 return temporaryOrder;
             }
-            catch { await transaction.RollbackAsync(); 
-                    throw; }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<TemporaryOrder> GetTemporaryOrder(long id)
         {
             return await _myDatabase.TemporaryOrders.Include(x => x.Details)
-                .ThenInclude(p=> p.Product)
+                .ThenInclude(p => p.Product)
                 .FirstOrDefaultAsync(n => n.Id == id);
         }
     }

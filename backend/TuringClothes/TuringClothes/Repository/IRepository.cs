@@ -8,7 +8,6 @@
         Task<TEntity>InsertAsync(TEntity entity);
         Task<TEntity>UpdateAsync(TEntity entity);
         Task<TEntity>DeleteAsync(TEntity entity);
-        Task<bool> SaveAsync();
         Task<bool> ExistAsync(TId id);
     }
 }

@@ -9,6 +9,13 @@
       <p>
         Aquí puedes ver y gestionar los productos disponibles en el sistema.
       </p>
+      <div class="mb-3">
+        <a
+          class="bi bi-plus btn btn-dark"
+          [routerLink]="'/admin/products/add-new-product'"
+          >Agregar Producto</a
+        >
+      </div>
 
       <div class="card shadow-sm">
         <div class="card-body">
@@ -16,6 +23,7 @@
             <thead>
               <tr>
                 <th>ID</th>
+                <th>Imagen</th>
                 <th>Nombre</th>
                 <th>Precio</th>
                 <th>Stock</th>
@@ -25,9 +33,15 @@
               @for (product of products; track product.id) {
               <tr>
                 <td>{{ product.id }}</td>
+                <td><img [src]="product.image" width="50" /></td>
                 <td>{{ product.name }}</td>
-                <td>{{ product.price }}</td>
+                <td>{{ product.price / 100 }}</td>
                 <td>{{ product.stock }}</td>
+                <button
+                  class="bi bi-trash border border-danger"
+                  style="color: red"
+                  (click)="removeProduct(product.id)"
+                ></button>
               </tr>
               }
             </tbody>

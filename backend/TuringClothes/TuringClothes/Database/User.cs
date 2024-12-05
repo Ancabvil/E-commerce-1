@@ -20,6 +20,7 @@ namespace TuringClothes.Database
  
         public string Address { get; set; }
    
+        public ICollection<Order> Orders { get; set; }
 
         [DefaultValue("user")]
         public string Role { get; set; }

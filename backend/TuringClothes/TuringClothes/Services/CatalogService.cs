@@ -1,28 +1,25 @@
 ﻿using TuringClothes.Database;
 using TuringClothes.Enums;
+using TuringClothes.Model;
 using TuringClothes.Pagination;
 
 namespace TuringClothes.Services
 {
     public class CatalogService
     {
-        private readonly MyDatabase _myDatabase;
-
 
         private readonly SmartSearchService _smartSearchService;
-        public CatalogService(MyDatabase myDatabase, SmartSearchService smartSearchService)
+
+        public CatalogService(SmartSearchService smartSearchService)
         {
-            _myDatabase = myDatabase;
             _smartSearchService = smartSearchService;
         }
 
         public PagedResults<Product> GetPaginationCatalog(PaginationParams request)
         {
 
-            //var query = _myDatabase.Products.AsQueryable();
             var query = _smartSearchService.Search(request.Query);
 
-            // Aplica el ordenamiento basado en el parámetro 'OrderBy'
             query = request.OrderBy switch
             {
                 OrderCatalog.OrderField.Price => request.Direction == OrderCatalog.OrderDirection.Ascending
@@ -31,7 +28,7 @@ namespace TuringClothes.Services
                 OrderCatalog.OrderField.Name => request.Direction == OrderCatalog.OrderDirection.Ascending
                 ? query.OrderBy(x => x.Name)
                 : query.OrderByDescending(x => x.Name),
-                _ => query // No hay orden si OrderBy es nulo
+                _ => query
             };
             var totalNumberOfRecords = query.Count();
 
@@ -44,8 +41,6 @@ namespace TuringClothes.Services
 
             var skipAmount = request.PageSize * (request.PageNumber - 1);
 
-            
-            // Luego aplica la paginación
             var results = query.Skip(skipAmount).Take(request.PageSize).ToList();
 
             

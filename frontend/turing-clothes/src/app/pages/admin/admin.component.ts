@@ -1,10 +1,10 @@
-import { NgClass } from '@angular/common';
 import { Component } from '@angular/core';
 import { Pedido } from '../../models/pedido';
+import { NgClass } from '@angular/common';
 import { SidebarComponent } from "../../shared/sidebar/sidebar.component";
 
 @Component({
-  selector: 'app-user',
+  selector: 'app-admin',
   standalone: true,
   imports: [NgClass, SidebarComponent],
   templateUrl: './admin.component.html',

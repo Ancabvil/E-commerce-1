@@ -45,10 +45,7 @@ namespace TuringClothes.Repository
             throw new NotImplementedException();
         }
 
-        public Task<bool> SaveAsync()
-        {
-            throw new NotImplementedException();
-        }
+       
 
         public async Task UpdateAsync(TEntity entity)
         {

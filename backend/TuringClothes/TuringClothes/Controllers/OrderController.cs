@@ -11,24 +11,24 @@ namespace TuringClothes.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly OrderRepository _orderRepository;
+        private readonly UnitOfWork _unitOfWork;
 
-        public OrderController (OrderRepository orderRepository)
+        public OrderController (UnitOfWork unitOfWork)
         {
-            _orderRepository = orderRepository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpPost("CreateOrder")]
         public async Task<Order> CreateOrder(OrderDto orderDto)
         {
-            var order = await _orderRepository.CreateOrder(orderDto.OrderId, orderDto.PaymentMethod, orderDto.Status, orderDto.Total, orderDto.Email);
+            var order = await _unitOfWork.OrderRepository.CreateOrder(orderDto.OrderId, orderDto.PaymentMethod, orderDto.Status, orderDto.Total, orderDto.Email);
             return order;
         }
 
         [HttpGet("GetOrderById")]
         public async Task<Order> GetOrderById(long orderId)
         {
-            return await _orderRepository.GetOrderById(orderId);
+            return await _unitOfWork.OrderRepository.GetOrderById(orderId);
         }
 
     }
