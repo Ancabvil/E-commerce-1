@@ -1,5 +1,4 @@
 import { CartDetail } from "./cart-detail";
-import { User } from "./user";
 
 export interface Order {
   id: number,
@@ -9,5 +8,4 @@ export interface Order {
   transactionStatus: string,
   totalPrice: number,
   orderDetails: CartDetail[],
-  user: User;
 }

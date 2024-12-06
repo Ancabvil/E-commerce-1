@@ -34,10 +34,10 @@ export class CheckoutService {
     return this.api.post('Checkout/SendEmail', { to, htmlContent });
 }
 
-async getUserById(userId: number): Promise<User> {
-  const user = await this.api.get<User>(`User/GetUserById?userId=${userId}`).then(response => response.data);
-  return user;
-}
 
+async getUserByEmail(email: string): Promise<User> {
+  const result = await this.api.get<User>(`Auth/user by email?mail=${email}`);
+  return result.data;
+}
 
 }
